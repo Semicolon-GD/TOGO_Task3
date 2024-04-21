@@ -1,6 +1,4 @@
-using Unity.VisualScripting;
-using UnityEngine.EventSystems;
-using UnityEngine.Events;
+
 using UnityEngine;
 
 public abstract class CollectibleBehaviour : MonoBehaviour
