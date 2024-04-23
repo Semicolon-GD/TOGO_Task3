@@ -1,22 +1,30 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float verticalMovementSensitivity = 1;
+    [SerializeField] private Renderer playerRenderer;
+    [SerializeField] private Animator playerAnimator;
+    [SerializeField] private GameObject deathCam;
+    [SerializeField] private GameObject tutorialUI;
+
+   
     
     private GameObject _player;
     private Collider _playerCollider;
     private Material _playerMaterial;
-
+    private Vector3 _deathPosition;
     private float _verticalSpeed=0;
     private void Awake()
     {
         _player = this.gameObject;
         _playerCollider = _player.GetComponent<Collider>();
-        _playerMaterial = _player.GetComponent<Renderer>().material;
+        _playerMaterial = playerRenderer.material;
+    }
+    private void Update()
+    {
+        _player.transform.position+=Vector3.forward * (_verticalSpeed * Time.deltaTime);
     }
 
     #region Event Subscription
@@ -25,6 +33,8 @@ public class PlayerController : MonoBehaviour
     {
         InputController.OnFirstClick += StartMovement;
         InputController.Dragging += HorizontalMovement;
+        GameManager.OnGameOver += GameOver;
+        FinishLine.OnFinishLinePassed += GameWon;
     }
     
 
@@ -32,6 +42,8 @@ public class PlayerController : MonoBehaviour
     {
         InputController.OnFirstClick -= StartMovement;
         InputController.Dragging -= HorizontalMovement;
+        GameManager.OnGameOver -= GameOver;
+        FinishLine.OnFinishLinePassed += GameWon;
     }
 
     
@@ -41,17 +53,35 @@ public class PlayerController : MonoBehaviour
 
     private void StartMovement()
     {
-        _verticalSpeed = 3;
+        tutorialUI.SetActive(false);
+        _verticalSpeed = 10;
+        playerAnimator.SetBool("isGameStarted",true);
     }
     private void HorizontalMovement(float horizontal)
     {
         _player.transform.position += Vector3.right * (horizontal * verticalMovementSensitivity * Time.deltaTime);
     }
 
-    private void Update()
+    private void GameOver()
     {
-        _player.transform.position+=Vector3.forward * (_verticalSpeed * Time.deltaTime);
+        playerAnimator.SetTrigger("Death");
+        _verticalSpeed = 0;
+        _deathPosition = _player.transform.position;
+        deathCam.transform.position = new Vector3(deathCam.transform.position.x, deathCam.transform.position.y, _deathPosition.z);
+        InputController.Dragging -= HorizontalMovement;
     }
+    
+    private void GameWon()
+    {
+        if (playerAnimator != null)
+        {
+            playerAnimator.SetTrigger("Win");
+        }
+        _verticalSpeed = 0;
+        InputController.Dragging -= HorizontalMovement;
+    }
+
+    
     #endregion
 
     #region Collectible Metods
@@ -86,7 +116,7 @@ public class PlayerController : MonoBehaviour
     IEnumerator Invincibility()
     {
         _playerCollider.enabled = false;
-        _playerMaterial.color = Color.red;
+        _playerMaterial.color = Color.blue;
         yield return new WaitForSeconds(2);
         _playerCollider.enabled = true;
         _playerMaterial.color = Color.white;

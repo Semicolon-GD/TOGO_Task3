@@ -16,7 +16,7 @@ public abstract class CollectibleBehaviour : MonoBehaviour
    protected virtual void OnCollect()
    {
       GetComponent<Collider>().enabled = false;
-      GetComponent<MeshRenderer>().enabled = false;
+      Destroy(gameObject);
    }
 
    protected abstract void CollectibleEffect(Collider other);

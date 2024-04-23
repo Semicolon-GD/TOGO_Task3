@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class CoinCollectable : CollectibleBehaviour
 {
-    private readonly float[] _xLocations ={ -2.5f, 0f, 2.5f };
+    private readonly float[] _xLocations ={ -6f, 0f, 6f };
     
     private void Start()
-    {
-            InvokeRepeating("PositionChange",1f,1f);
+    { 
+        InvokeRepeating("PositionChange",1f,1f);
     }
 
 
