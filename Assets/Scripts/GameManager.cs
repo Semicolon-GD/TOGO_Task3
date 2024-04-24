@@ -57,16 +57,15 @@ public class GameManager : MonoBehaviour
     public void RestartGame()
     {
         ScoreSystem.Reset();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         gameOverUI.SetActive(false);
         inGameUI.SetActive(true);
         _cinemachineBrain.enabled = false;
         gameCamera.transform.position = _cameraPosition;
         gameCamera.transform.eulerAngles = _cameraRotation;
-        
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
     
-    private void GameWon()
+    public void GameWon()
     {
         _cinemachineBrain.enabled = true;
         finishCam.SetActive(true);

@@ -43,7 +43,7 @@ public class PlayerController : MonoBehaviour
         InputController.OnFirstClick -= StartMovement;
         InputController.Dragging -= HorizontalMovement;
         GameManager.OnGameOver -= GameOver;
-        FinishLine.OnFinishLinePassed += GameWon;
+        FinishLine.OnFinishLinePassed -= GameWon;
     }
 
     
@@ -71,12 +71,11 @@ public class PlayerController : MonoBehaviour
         InputController.Dragging -= HorizontalMovement;
     }
     
-    private void GameWon()
+    public void GameWon()
     {
-        if (playerAnimator != null)
-        {
+        
             playerAnimator.SetTrigger("Win");
-        }
+        
         _verticalSpeed = 0;
         InputController.Dragging -= HorizontalMovement;
     }
